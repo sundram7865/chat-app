@@ -24,7 +24,7 @@ Promise<void> => {
             res.status(401).json({ message: "Unauthorized" });
             return;
         }
-        req.user = await User.findById(decodedValue.user);
+        req.user =decodedValue.user;
         next();
     }catch(error:any){
         res.status(401).json({
@@ -34,7 +34,3 @@ Promise<void> => {
 }
 
 
-export  const myProfile=(req:AuthenticatedRequest,res:Response)=>{
-    const user=req.user;
-    res.json(user);
-}
