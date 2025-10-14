@@ -3,6 +3,8 @@ import TryCatch from "../config/TryCatch.js";
 import { redisClient } from "../index.js";
 import { User } from "../model/user.js";
 import { generateToken } from "../config/generateToken.js";
+import type { AuthenticatedRequest } from "../middleware/isAuth.js";
+import type { Response } from "express";
 
 export const loginUser = TryCatch(async (req, res) => {
     const {email} = req.body;
@@ -44,3 +46,32 @@ export const verifyUser= TryCatch(async(req,res)=>{
       user,
       token});
 })
+
+export  const myProfile=(req:AuthenticatedRequest,res:Response)=>{
+    const user=req.user 
+    res.json(user);
+}
+
+export const updateName=TryCatch(async(req:AuthenticatedRequest,res:Response)=>{
+  const user = await User.findById(req.user?._id);
+  if (!user) {
+    return res.status(404).json({ message: "please login" });
+  }
+  user.name = req.body.name;
+  await user.save();
+  const token = generateToken(user);
+  res.status(200).json({ message: "Name updated successfully", user , token });
+});
+
+export const getAllUsers = TryCatch(async (req: AuthenticatedRequest, res) => {
+  const users = await User.find({});
+  res.json(users);
+});
+
+export const getAUser = TryCatch(async (req: AuthenticatedRequest, res) => {
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+  res.json(user);
+});
