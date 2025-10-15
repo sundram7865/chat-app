@@ -1,6 +1,8 @@
 import TryCatch from "../config/TryCatch.js";
 import type { AuthenticatedRequest } from "../middlewares/isAuth.js";
 import { Chat } from "../models/chat.js";
+import { Messages } from "../models/Messages.js";
+import axios from "axios";
 
 export const createNewChat = TryCatch(async (req: AuthenticatedRequest, res) => {
     const  userId  = req.user?._id;
@@ -31,7 +33,36 @@ export const getAllChats = TryCatch(async (req: AuthenticatedRequest, res) => {
     const chatWithUserData = await Promise.all(
         chats.map(async (chat) => {
             const otherUserId = chat.users.find((id) => id !== userId);
+            const unseenCount = await Messages.countDocuments({
+                chatId: chat._id,
+                sender:{$ne:userId},
+                seen:false,
+            })
+            try{
+               const {data}= await axios.get(`${process.env.USER_SERVICE}/api/v1/user/${otherUserId}`);
+               return{
+                user:data,
+                chat:{
+                    ...chat.toObject(),
+                    latestMessage:chat.latestMessage || null,
+                    unseenCount
+                }
+               }
+            }catch(error){
+              console.log(error);
+              return{
+                user:{},
+                chat:{
+                    ...chat.toObject(),
+                    latestMessage:chat.latestMessage || null,
+                    unseenCount
+                }
+              }
+            }
         })
-    )
-       
-})
+    );
+    
+  res.json({
+    chats:chatWithUserData
+  })
+});
