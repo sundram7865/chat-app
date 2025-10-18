@@ -178,7 +178,7 @@ export const getMessagesByChat=TryCatch(async(req:AuthenticatedRequest,res)=>{
   })
   const messages = await Messages.find({chatId:chatId}).sort({createdAt:1});
   
-  const otherUserId = chat.users.find((id)=>id!=userId);
+  const otherUserId = chat.users.find((id)=>id!==userId);
 
   try{
       const {data}= await axios.get(`${process.env.USER_SERVICE}/api/v1/user/${otherUserId}`);
