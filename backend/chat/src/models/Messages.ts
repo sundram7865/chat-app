@@ -15,6 +15,7 @@ export interface IMessage extends Document{
    updatedAt: Date
 }
 
+
 const schema= new Schema<IMessage>({
     chatId:{type:Schema.Types.ObjectId,ref:"Chat",required:true},
     sender:{type:String,required:true},

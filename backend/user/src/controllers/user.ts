@@ -6,6 +6,7 @@ import { generateToken } from "../config/generateToken.js";
 import type { AuthenticatedRequest } from "../middleware/isAuth.js";
 import type { Response } from "express";
 
+
 export const loginUser = TryCatch(async (req, res) => {
     const {email} = req.body;
     const rateLimitKey =`otp:ratelimit:${email}`;
