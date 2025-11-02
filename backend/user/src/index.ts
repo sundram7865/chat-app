@@ -18,7 +18,13 @@ redisClient.connect()
 
 const app = express();
 app.use(express.json());
-app.use(cors( ));
+app.use(cors({
+    origin: [
+    "http://localhost:3000",     // for local testing
+    "http://51.21.255.132:3000"  // your EC2 frontend
+  ],
+  credentials: true,    
+}));
 app.use("/api/v1",userRoutes);
 const PORT = process.env.PORT || 3000;
 
