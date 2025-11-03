@@ -21,7 +21,7 @@ app.use(express.json());
 app.use(cors({
     origin: [
     "http://localhost:3000",     // for local testing
-    "http://51.21.255.132:3000"  // your EC2 frontend
+    "http://16.171.65.43:3000"  // your EC2 frontend
   ],
   credentials: true,    
 }));
